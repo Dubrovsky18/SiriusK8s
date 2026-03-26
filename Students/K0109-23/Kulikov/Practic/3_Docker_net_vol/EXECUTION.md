@@ -70,7 +70,7 @@ curl localhost:8080/api/items
 docker compose up -d --scale backend=3
 docker compose ps
 ```
-ожидание: видно 3 инстанса backend.
+> ожидание: видно 3 инстанса backend.
 
 ## самопроверка
 - сервисы в compose имеют состояние `healthy`;
@@ -79,8 +79,9 @@ docker compose ps
 - масштабирование backend работает.
 
 ## место для скриншотов
-- [![alt text](image.png)] `docker network inspect app-network`
-- [![alt text](image-1.png)] успешный `ping db`
-- [![alt text](image-2.png)] `select * from items;`
-- [вставить скриншот] `docker compose ps` до/после scale
-- [вставить скриншот] ответ `curl localhost:8080/api/items`
+- [![alt text](screens/EXECUTION/s14.png)] `docker network inspect app-network`
+- [![alt text](screens/EXECUTION/s15.png)] успешный `ping db`
+- [![alt text](screens/EXECUTION/s16.png)] `select * from items;`
+- [![alt text](screens/EXECUTION/s17.png)] `docker compose ps` до/после scale
+- [![alt text](screens/EXECUTION/s18.png)]
+- [![alt text](screens/EXECUTION/s19.png)] ответ `curl localhost:8080/api/items`

@@ -30,8 +30,8 @@ compose описывает многоконтейнерное приложени
 - проверка health и масштабирование backend.
 
 ## место для скриншотов
-- [![alt text](image.png)] `docker network ls` и `docker network inspect app-network`
-- [![alt text](image-1.png)] проверка `ping db` внутри сети
-- [![alt text](image-2.png)] `select * from items;` после перезапуска контейнера
-- [вставить скриншот] `docker compose ps` (healthy)
-- [вставить скриншот] `docker compose ps` после `--scale backend=3`
+- [![alt text](screens/BASE/s14.png)] `docker network ls` и `docker network inspect app-network`
+- [![alt text](screens/BASE/s15.png)] проверка `ping db` внутри сети
+- [![alt text](screens/BASE/s16.png)] `select * from items;` после перезапуска контейнера
+- [![alt text](screens/BASE/s17.png)] `docker compose ps` (healthy)
+- [![alt text](screens/BASE/s18.png)] `docker compose ps` после `--scale backend=3`
