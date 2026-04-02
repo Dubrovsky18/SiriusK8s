@@ -1,3 +1,6 @@
+Мои лабораторные работы по break находятся в папке SiriusK8s-main 
+
+
 # SiriusK8s — Практика по Kubernetes и контейнеризации
 
 Учебная практика по технологиям виртуализации: от Linux namespaces и Docker до Kubernetes.
