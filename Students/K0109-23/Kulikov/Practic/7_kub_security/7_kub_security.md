@@ -14,13 +14,14 @@ kubectl auth can-i delete pods --namespace rbac-demo --as=system:serviceaccount:
 kubectl apply -f pod-rbac-demo.yaml
 kubectl exec -it rbac-test -n rbac-demo -- sh
 ```
+
+проверка показала что list можно, delete нельзя, то есть минимум прав соблюден
+
 ![скрин 1](screens/image.png)
 ![скрин 2](screens/image-1.png)
 ![скрин 3](screens/image-2.png)
 ![скрин 4](screens/image-3.png)
 ![скрин 5](screens/image-4.png)
-
-проверка показала что list можно, delete нельзя, то есть минимум прав соблюден
 
 2. networkpolicy
 

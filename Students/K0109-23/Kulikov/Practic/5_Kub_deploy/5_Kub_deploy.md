@@ -18,7 +18,7 @@ kubectl get rs
 ![скрин 1](screens/image.png)
 ![скрин 2](screens/image-1.png)
 
-1. добавил service и проверил доступ
+2. добавил service и проверил доступ
 
 использовал `service.yaml`
 
@@ -34,7 +34,7 @@ while true; do curl -s $NODE_IP:30080 | head -n 3; sleep 1; done
 ![скрин 3](screens/image-2.png)
 ![скрин 4](screens/image-3.png)
 
-2. сделал rolling update и откат
+3. сделал rolling update и откат
 
 ```bash
 kubectl set image deployment/webapp webapp=nginxdemos/hello:latest
@@ -71,6 +71,6 @@ curl webapp.local/api
 ![скрин 11](screens/image-10.png)
 ![скрин 12](screens/image-11.png)
 
-1. вывод
+5. вывод
 
 теперь понял как деплой живет в реале: обновление, откат и внешняя маршрутизация
