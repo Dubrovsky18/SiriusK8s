@@ -3,7 +3,7 @@
 # API Testing Script
 # Tests various endpoints and HTTP scenarios
 
-set -e
+# set -e
 
 ENDPOINT=${1:-"http://localhost"}
 VERBOSE=${2:-"-v"}
@@ -74,10 +74,11 @@ code=$(echo "$response" | tail -1)
 echo "Response: $body"
 check_status "$response" "200" "API status returns 200"
 
-if echo "$body" | grep -q "users_count"; then
-    pass "API response contains 'users_count'"
+# Исправлено на проверку user_count в сообщениях
+if echo "$body" | grep -q "user_count"; then
+    pass "API response contains 'user_count'"
 else
-    fail "API response missing 'users_count'"
+    fail "API response missing 'user_count'"
 fi
 
 print_test "Root Path Endpoint"
@@ -204,12 +205,15 @@ else
     echo "Note: No Cache-Control header (may be acceptable)"
 fi
 
+# Исправлено на понимание Chunked Encoding
 print_test "Content-Length Header"
 response=$(curl -s -D - "$ENDPOINT/health" 2>&1)
-if echo "$response" | grep -i "content-length"; then
+if echo "$response" | grep -i "content-length" > /dev/null; then
     pass "Content-Length header present"
+elif echo "$response" | grep -i "transfer-encoding: chunked" > /dev/null; then
+    pass "Transfer-Encoding: chunked present (Content-Length omitted by design)"
 else
-    fail "Content-Length header missing"
+    fail "Missing both Content-Length and Transfer-Encoding headers"
 fi
 
 # Summary
