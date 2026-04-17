@@ -43,3 +43,39 @@
 Не сразу понял, где режутся запросы → посмотрел логи middleware
 
 <img width="1054" height="551" alt="image" src="https://github.com/user-attachments/assets/56b509a4-197f-46e8-9066-000b367b974c" />
+
+
+ПАРА 4:
+Проблемы:
+В ходе выполнения были найдены несколько расхождений между документацией и фактической конфигурацией:
+1. В инструкции использовался пользователь demo, однако в контейнере доступен пользователь postgres. Подключение было выполнено через: psql -U postgres -d demo
+2. Логи не появлялись до момента генерации трафика. Проблема решена запуском тестовых сценариев (test-api.sh, test-rate-limiting.sh).
+
+Анализ логов через SQL:
+1. Просмотр записей: "SELECT * FROM request_logs LIMIT 5;"
+Результат показал, что в логах фиксируются: метод запроса, путь, HTTP-статус, время ответа, IP клиента,признак rate limiting.
+
+2. Сводная статистика: SELECT status_code, COUNT(*) 
+FROM request_logs 
+GROUP BY status_code;
+Получены следующие значения: 200 — 256 запросов, 429 — 335 запросов, 404 — 1 запрос.
+Последние события: SELECT * FROM request_logs 
+ORDER BY timestamp DESC 
+LIMIT 20;
+По временной выборке видно, что при интенсивной нагрузке появляется серия ответов с кодом 429, что говорит о нормальной работе.
+
+<img width="1254" height="315" alt="image" src="https://github.com/user-attachments/assets/96138487-76ab-4a23-8cb3-cdb9393aecc9" />
+
+<img width="1177" height="967" alt="image" src="https://github.com/user-attachments/assets/b0b95ff5-99a8-4630-a2ab-bf4a9aafd01e" />
+
+
+ПАРА 5:
+Сначала столкнулся с проблемой: скрипт setup-debugging.sh не видел запущенные контейнеры. Оказалось, что там использовался docker-compose, а у меня версия с docker compose. После замены всё заработало нормально.
+Дальше с помощью tcpdump посмотрел сетевой трафик. Увидел, как контейнер rate-limiter общается с postgres (порт 5432), плюс были ARP-запросы — это значит, что сеть внутри Docker работает как надо.
+Потом через curl -v проверил API — пришёл нормальный ответ 200 OK с JSON. Через strace посмотрел, какие системные вызовы происходят (connect, send, recv), чтобы понять, как именно проходит запрос.
+Ещё сделал простой сценарий отказа: остановил контейнер app и попробовал сделать запрос. В ответ получил ошибку — значит система нормально реагирует на то, что backend недоступен.
+В итоге: всё работает, трафик между сервисами есть, инструменты отладки отработали, и поведение при сбое тоже проверил.
+
+<img width="1280" height="529" alt="image" src="https://github.com/user-attachments/assets/a08df9fe-1292-4449-a1fc-cd8f64f8a04f" />
+<img width="1246" height="658" alt="image" src="https://github.com/user-attachments/assets/b9215ccd-381f-4573-b49e-cdcea1254552" />
+<img width="1191" height="817" alt="image" src="https://github.com/user-attachments/assets/8ee89e5a-b574-4bad-9d1b-2cf1c3d92d74" />
