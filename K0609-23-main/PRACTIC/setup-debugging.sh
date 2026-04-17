@@ -33,13 +33,13 @@ print_warning() {
 # Check if docker-compose is running
 print_header "Checking Docker Services"
 
-if ! docker-compose ps > /dev/null 2>&1; then
+if ! docker compose ps > /dev/null 2>&1; then
     print_error "Docker Compose services not running. Start with: docker-compose up -d"
     exit 1
 fi
 
 print_info "Docker services are running"
-docker-compose ps
+docker compose ps
 
 # Install debugging tools
 print_header "Installing Debugging Tools"
@@ -48,30 +48,30 @@ print_header "Installing Debugging Tools"
 containers=("app" "rate-limiter" "postgres" "nginx")
 
 for container in "${containers[@]}"; do
-    if docker-compose ps "$container" | grep -q "Up"; then
+    if docker compose ps "$container" | grep -q "Up"; then
         print_info "Setting up debugging in $container..."
 
         # Detect base image and install appropriate tools
         case $container in
             "app")
                 # Go app in Alpine
-                docker-compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
+                docker compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
                 print_warning "Could not install tools in $container (may lack permissions)"
                 ;;
             "rate-limiter")
                 # Node.js in Alpine
-                docker-compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
+                docker compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
                 print_warning "Could not install tools in $container"
                 ;;
             "postgres")
                 # PostgreSQL in Alpine/Debian
-                docker-compose exec -T "$container" sh -c "apt-get update && apt-get install -y tcpdump strace curl less vim" 2>/dev/null || \
-                docker-compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
+                docker compose exec -T "$container" sh -c "apt-get update && apt-get install -y tcpdump strace curl less vim" 2>/dev/null || \
+                docker compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
                 print_warning "Could not install tools in $container"
                 ;;
             "nginx")
                 # Nginx in Alpine
-                docker-compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
+                docker compose exec -T "$container" sh -c "apk update && apk add tcpdump strace curl less vim" 2>/dev/null || \
                 print_warning "Could not install tools in $container"
                 ;;
         esac
@@ -84,7 +84,7 @@ done
 print_header "Preparing Logging Directory"
 
 log_dir="/app/logs"
-docker-compose exec -T rate-limiter sh -c "mkdir -p $log_dir && chmod 777 $log_dir" 2>/dev/null || \
+docker compose exec -T rate-limiter sh -c "mkdir -p $log_dir && chmod 777 $log_dir" 2>/dev/null || \
 print_warning "Could not create logging directory"
 
 print_info "Logging directory prepared"
@@ -93,13 +93,13 @@ print_info "Logging directory prepared"
 print_header "Network Configuration"
 
 print_info "Container Networks:"
-docker-compose exec -T app ip addr show 2>/dev/null || print_warning "Could not retrieve network info"
+docker compose exec -T app ip addr show 2>/dev/null || print_warning "Could not retrieve network info"
 
 print_info "DNS Resolution:"
 for container in app rate-limiter postgres nginx; do
-    if docker-compose ps "$container" | grep -q "Up"; then
+    if docker compose ps "$container" | grep -q "Up"; then
         echo "  $container:"
-        docker-compose exec -T "$container" nslookup postgres 2>/dev/null | head -5 || echo "    (nslookup not available)"
+        docker compose exec -T "$container" nslookup postgres 2>/dev/null | head -5 || echo "    (nslookup not available)"
     fi
 done
 
@@ -130,30 +130,30 @@ cat > ./debug-helpers.sh << 'EOF'
 # tcpdump helpers
 tcpdump_app_connections() {
     echo "Capturing HTTP traffic between nginx and app..."
-    docker-compose exec nginx tcpdump -i eth0 -A 'tcp port 3000'
+    docker compose exec nginx tcpdump -i eth0 -A 'tcp port 3000'
 }
 
 tcpdump_db_connections() {
     echo "Capturing PostgreSQL connections..."
-    docker-compose exec postgres tcpdump -i eth0 -A 'tcp port 5432'
+    docker compose exec postgres tcpdump -i eth0 -A 'tcp port 5432'
 }
 
 tcpdump_all_traffic() {
     echo "Capturing all traffic..."
-    docker-compose exec app tcpdump -i eth0 -c 100
+    docker compose exec app tcpdump -i eth0 -c 100
 }
 
 # strace helpers
 strace_app_startup() {
     echo "Tracing app startup..."
-    docker-compose exec app strace -f -e trace=execve,open,read -o /tmp/strace.log ./app
+    docker compose exec app strace -f -e trace=execve,open,read -o /tmp/strace.log ./app
 }
 
 strace_current_app() {
     echo "Tracing currently running app..."
-    app_pid=$(docker-compose exec -T app pgrep -f "^/app/app$" | head -1)
+    app_pid=$(docker compose exec -T app pgrep -f "^/app/app$" | head -1)
     if [ ! -z "$app_pid" ]; then
-        docker-compose exec app strace -p $app_pid -f
+        docker compose exec app strace -p $app_pid -f
     fi
 }
 
@@ -177,24 +177,24 @@ test_rate_limit() {
 
 # Log viewers
 show_middleware_logs() {
-    docker-compose logs -f rate-limiter
+    docker compose logs -f rate-limiter
 }
 
 show_app_logs() {
-    docker-compose logs -f app
+    docker compose logs -f app
 }
 
 show_db_logs() {
-    docker-compose logs -f postgres
+    docker compose logs -f postgres
 }
 
 show_nginx_logs() {
-    docker-compose logs -f nginx
+    docker compose logs -f nginx
 }
 
 # Database helpers
 query_requests() {
-    docker-compose exec -T postgres psql -U demo -d demo << SQL
+    docker compose exec -T postgres psql -U demo -d demo << SQL
 SELECT timestamp, method, path, status_code, response_time_ms, rate_limited
 FROM request_logs
 ORDER BY timestamp DESC
@@ -203,7 +203,7 @@ SQL
 }
 
 query_request_stats() {
-    docker-compose exec -T postgres psql -U demo -d demo << SQL
+    docker compose exec -T postgres psql -U demo -d demo << SQL
 SELECT
   status_code,
   COUNT(*) as count,
@@ -232,7 +232,7 @@ show_docker_stats() {
 show_container_ps() {
     container=$1
     [ -z "$container" ] && container="app"
-    docker-compose exec "$container" ps aux
+    docker compose exec "$container" ps aux
 }
 
 # Help
