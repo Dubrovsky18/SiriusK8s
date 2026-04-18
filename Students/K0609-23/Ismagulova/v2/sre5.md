@@ -2,7 +2,7 @@
 
 ## Цель работы
 Освоение инструментов низкоуровневой сетевой отладки (tcpdump), расширенное тестирование API с помощью curl и анализ поведения распределенной системы в условиях преднамеренных сбоев (Chaos Engineering).
-
+---
 <img width="981" height="1046" alt="Вставленное изображение (5)" src="https://github.com/user-attachments/assets/d42e746c-ccd5-4778-8831-1c877024981b" />
 
 <img width="981" height="1046" alt="Вставленное изображение (6)" src="https://github.com/user-attachments/assets/6e449781-b7c8-444e-8237-40a51437ca16" />
