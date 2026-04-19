@@ -15,7 +15,7 @@
 | Tsitsenko | **9/10** |
 | Vasilkov-Arseniy | **10/10** | 
 | krasnov | **0/10** |
-| Komarov | **0/10** | 
+| Komarov | **6/10** | 
 | nika_petrovskaia | **6/10** | 
 | Diakonova Violetta | **6/10** | 
 | Kulikov | **8/10** | 
@@ -36,11 +36,10 @@
 | Kuznetsov | **8/10** |
 | Malimon | **8/10** | 
 | Korzhueva | **8/10** | 
-| Krasilnikova | **0/10** | 
-| Тищенко В.Д. | **7/10** |
-| Ismagulova | **4/10** | 
+| Krasilnikova | **7/10** | 
+| Ismagulova | **7/10** | 
 | Konkov | **7/10** | 
-| Nalizko_Alona | **0/10** | 
+| Nalizko_Alona | **8/10** | 
 | Nikiyan | **0/10** | 
 | mikhaylov_ivan | **0/10** | 
 
